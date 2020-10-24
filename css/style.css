@@ -1,0 +1,41 @@
+body {
+    height: 60vmin;
+    width: 40vmin;
+}
+
+#container {
+    display: inline-grid;
+    grid-template-rows: 20% 80%;
+    grid-template-columns: 100%;
+    grid-template-areas: 
+    "display"
+    "keypad";
+}
+
+#display {
+    text-align: right;
+    grid-area: display;
+    background-color: gainsboro;
+    border: 0.1em solid black;
+}
+
+#keypad {
+    display: inline-grid;
+    grid-area: keypad;
+    grid-template-rows: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+}
+
+#equals {
+    grid-column: 3 / 5;
+    grid-row: 5 / 6;
+}
+
+.center {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
