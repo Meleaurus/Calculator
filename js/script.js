@@ -1,8 +1,10 @@
 const container = document.querySelector("#container");
 const keypad = document.querySelector("#keypad");
 const display = document.querySelector("#display");
-let value = 0;
 let operation = "";
+let firstNum = "False";
+let input0 = 0;
+let input1 = 0;
 
 const keys = [
     {id: "DEL", text: "DEL",},
@@ -32,6 +34,8 @@ for (let i = 0; i < keys.length; i++) {
     if (keys[i].id === "add" || keys[i].id === "subtract" || 
     keys[i].id === "multiply" || keys[i].id === "divide") {
         btn.classList.add("operator");
+    } else if (keys[i].id === "CE") {
+        btn.classList.add("clear")
     } else {
         btn.classList.add("num");
     };
@@ -46,26 +50,38 @@ screen = (text) => {
 addEvent = (btn) => {
     btn.addEventListener("click", () => {
         if (btn.classList.contains("num")) {
-        value = btn.innerHTML;
-        screen(value);
-        console.log(value);
+            if (firstNum === "True") {
+                input1 = display.innerHTML + btn.innerHTML;
+                console.log(input1);
+            }
+            screen(display.innerHTML + btn.innerHTML);
         } else if (btn.classList.contains("operator")) {
-            operation = btn.id;
+            operation = btn.id; 
+            input0 = display.innerHTML;
+            firstNum = "True";
             console.log(operation);
-        };
+            console.log(input0);
+            display.innerHTML = "";
+        } else if (btn.classList.contains("clear")) {
+            display.innerHTML = "";
+            firstNum = "False";
+            input0 = input1 = 0;
+        }
     });
 };
 
-numbers = document.querySelectorAll(".num");
-numbers.forEach(addEvent);
-
-operators = document.querySelectorAll(".operator");
-operators.forEach(addEvent);
+numbers = document.querySelectorAll(".num").forEach(addEvent);
+operators = document.querySelectorAll(".operator").forEach(addEvent);
+clearEntry = document.querySelectorAll(".clear").forEach(addEvent);
 
 let equals = document.createElement("button");
 equals.innerHTML = "=";
 equals.id = "equals";
 keypad.appendChild(equals);
+equals.addEventListener("click", () => {
+    firstNum = "False";
+    screen(operate(operation, input0, input1));
+});
 
 add = (a, b) => {
     return a + b;
@@ -83,8 +99,9 @@ divide = (a, b) => {
     return a / b;
 };
 
-operate = (operator, a, b) => {
-    str = operator.toLowerCase();
+operate = (str, a, b) => {
+    a = parseInt(a);
+    b = parseInt(b);
     if (str == "add") {
         return add(a , b);
     } else if (str == "subtract") {
@@ -93,9 +110,5 @@ operate = (operator, a, b) => {
         return multiply(a, b);
     } else if (str == "divide") {
         return divide(a, b);
-    } else {
-        return alert("Please type in a valid operator.")
-    }
+    } 
 };
-
-console.log(operate("divide", 20, 2));
