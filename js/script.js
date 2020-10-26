@@ -2,9 +2,8 @@ const container = document.querySelector("#container");
 const keypad = document.querySelector("#keypad");
 const display = document.querySelector("#display");
 let operation = "";
-let firstNum = "False";
-let input0 = 0;
-let input1 = 0;
+let operationSelected = "False";
+let current = [];
 
 const keys = [
     {id: "DEL", text: "DEL",},
@@ -44,28 +43,26 @@ for (let i = 0; i < keys.length; i++) {
 }; 
 
 screen = (text) => {
+    operationSelected = "False";
     display.innerHTML = text;
 };
 
 addEvent = (btn) => {
     btn.addEventListener("click", () => {
         if (btn.classList.contains("num")) {
-            if (firstNum === "True") {
-                input1 = display.innerHTML + btn.innerHTML;
-                console.log(input1);
-            }
             screen(display.innerHTML + btn.innerHTML);
         } else if (btn.classList.contains("operator")) {
+            if (operationSelected === "True") {
+                screen(operate(operation, current[0], display.innerHTML));
+            }
             operation = btn.id; 
-            input0 = display.innerHTML;
-            firstNum = "True";
-            console.log(operation);
-            console.log(input0);
+            operationSelected = "True";
+            current.push(display.innerHTML); 
+            console.log(current);
             display.innerHTML = "";
         } else if (btn.classList.contains("clear")) {
             display.innerHTML = "";
-            firstNum = "False";
-            input0 = input1 = 0;
+            current = [];
         }
     });
 };
@@ -79,36 +76,19 @@ equals.innerHTML = "=";
 equals.id = "equals";
 keypad.appendChild(equals);
 equals.addEventListener("click", () => {
-    firstNum = "False";
-    screen(operate(operation, input0, input1));
+    screen(operate(operation, current, current));
 });
-
-add = (a, b) => {
-    return a + b;
-};
-
-subtract = (a, b) => {
-    return a - b;
-};
-
-multiply = (a, b) => {
-    return a * b;
-};
-
-divide = (a, b) => {
-    return a / b;
-};
 
 operate = (str, a, b) => {
     a = parseInt(a);
     b = parseInt(b);
     if (str == "add") {
-        return add(a , b);
+        return a + b;
     } else if (str == "subtract") {
-        return subtract(a, b);
+        return a - b;
     } else if (str == "multiply") {
-        return multiply(a, b);
+        return a * b;
     } else if (str == "divide") {
-        return divide(a, b);
+        return a / b;
     } 
 };
