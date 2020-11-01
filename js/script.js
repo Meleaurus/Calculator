@@ -1,14 +1,11 @@
 const container = document.querySelector("#container");
 const keypad = document.querySelector("#keypad");
 const display = document.querySelector("#display");
-let operation = "";
-let operationSelected = "False";
-let current = [];
 
 const keys = [
     {id: "DEL", text: "DEL",},
     {id: "CE", text: "CE",},
-    {id: "sign", text: "+/-",},
+    {id: "plusMinus", text: "+/-",},
     {id: "divide", text: "/",},
     {id: "seven", text: "7",},
     {id: "eight", text: "8",},
@@ -24,6 +21,7 @@ const keys = [
     {id: "add", text: "+",},
     {id: "zero", text: "0"},
     {id: "dec", text: "."},
+    {id: "equal", text: "="},
 ];
 
 for (let i = 0; i < keys.length; i++) { 
@@ -34,61 +32,96 @@ for (let i = 0; i < keys.length; i++) {
     keys[i].id === "multiply" || keys[i].id === "divide") {
         btn.classList.add("operator");
     } else if (keys[i].id === "CE") {
-        btn.classList.add("clear")
+        btn.classList.add("ce");
+    } else if (keys[i].id === "DEL") {
+        btn.classList.add("del");
+    } else if (keys[i].id === "dec") {
+        btn.classList.add("dec");
+    } else if (keys[i].id === "plusMinus") {
+        btn.classList.add("plusMinus");  
+    } else if (keys[i].id === "equal") {
+        btn.classList.add("equal");
     } else {
         btn.classList.add("num");
     };
+    display.innerHTML = "0";
     keypad.appendChild(btn);
     container.appendChild(keypad);
 }; 
 
-screen = (text) => {
-    operationSelected = "False";
-    display.innerHTML = text;
-};
-
-addEvent = (btn) => {
-    btn.addEventListener("click", () => {
-        if (btn.classList.contains("num")) {
-            screen(display.innerHTML + btn.innerHTML);
-        } else if (btn.classList.contains("operator")) {
-            if (operationSelected === "True") {
-                screen(operate(operation, current[0], display.innerHTML));
+keypad.addEventListener("click", e => {
+    if (e.target.matches("button")) {
+        const key = e.target;
+        const identity = e.target.classList;
+        const keyContent = key.innerHTML;
+        const displayedNum = display.innerHTML;
+        const previousKeyType = container.dataset.previousKeyType;
+        if (identity.contains("num")) {
+            removePress(Array.from(keypad.children));
+            if (displayedNum === "0" || previousKeyType === "operator") {
+                display.innerHTML = keyContent;
+            } else {
+                display.innerHTML = displayedNum + keyContent;
+            } 
+            container.dataset.previousKeyType = "number";
+        } else if (identity.contains("dec")) {
+            removePress(Array.from(keypad.children));
+            if (!displayedNum.includes(".")) {
+                display.innerHTML = displayedNum + ".";
+            } 
+            if (previousKeyType === "operator") { 
+                display.innerHTML = "0.";
             }
-            operation = btn.id; 
-            operationSelected = "True";
-            current.push(display.innerHTML); 
-            console.log(current);
-            display.innerHTML = "";
-        } else if (btn.classList.contains("clear")) {
-            display.innerHTML = "";
-            current = [];
+            container.dataset.previousKeyType = "decimal";
+        } else if (identity.contains("ce")) {
+            removePress(Array.from(keypad.children));
+            display.innerHTML = "0";
+            container.dataset.previousKeyType = "clear";
+        } else if (identity.contains("del")) {
+            removePress(Array.from(keypad.children));
+            const arr = Array.from(display.innerHTML);
+            arr.pop();
+            if (arr.length === 0) {
+                display.innerHTML = "0";
+            } else {
+                display.innerHTML = String(arr.join(""));
+            }
+            container.dataset.previousKeyType = "delete"
+        } else if (identity.contains("operator")) {
+            removePress(Array.from(keypad.children));
+            key.classList.add("isPressed");
+            const firstValue = container.dataset.firstValue;
+            const operator = container.dataset.operator;
+            const secondValue = displayedNum;
+            if (firstValue && operator) {
+                display.innerHTML = operate(operator, firstValue, secondValue);
+            }
+            container.dataset.firstValue = displayedNum;
+            container.dataset.operator = keyContent;
+            container.dataset.previousKeyType = "operator";
+        } else if (identity.contains("equal")) {
+            removePress(Array.from(keypad.children));
+            const firstValue = container.dataset.firstValue;
+            const operator = container.dataset.operator;
+            const secondValue = displayedNum;
+            display.innerHTML = operate(operator, firstValue, secondValue);
+            container.dataset.previousKeyType = "equal";
         }
-    });
-};
-
-numbers = document.querySelectorAll(".num").forEach(addEvent);
-operators = document.querySelectorAll(".operator").forEach(addEvent);
-clearEntry = document.querySelectorAll(".clear").forEach(addEvent);
-
-let equals = document.createElement("button");
-equals.innerHTML = "=";
-equals.id = "equals";
-keypad.appendChild(equals);
-equals.addEventListener("click", () => {
-    screen(operate(operation, current, current));
+    }
 });
 
-operate = (str, a, b) => {
-    a = parseInt(a);
-    b = parseInt(b);
-    if (str == "add") {
-        return a + b;
-    } else if (str == "subtract") {
-        return a - b;
-    } else if (str == "multiply") {
-        return a * b;
-    } else if (str == "divide") {
-        return a / b;
+removePress = (ele) => {
+    ele.forEach(k => k.classList.remove("isPressed"));
+} 
+
+operate = (operator, a, b) => {
+    if (operator == "+") {
+        return parseFloat(a) + parseFloat(b);
+    } else if (operator == "-") {
+        return parseFloat(a) - parseFloat(b);
+    } else if (operator == "*") {
+        return parseFloat(a) * parseFloat(b);
+    } else if (operator == "/") {
+        return parseFloat(a) / parseFloat(b);
     } 
 };
