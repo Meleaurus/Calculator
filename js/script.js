@@ -58,7 +58,7 @@ keypad.addEventListener("click", e => {
         const previousKeyType = container.dataset.previousKeyType;
         if (identity.contains("num")) {
             removePress(Array.from(keypad.children));
-            if (displayedNum === "0" || previousKeyType === "operator") {
+            if (displayedNum === "0" || previousKeyType === "operator" || previousKeyType === "calculate") {
                 display.innerHTML = keyContent;
             } else {
                 display.innerHTML = displayedNum + keyContent;
@@ -69,13 +69,16 @@ keypad.addEventListener("click", e => {
             if (!displayedNum.includes(".")) {
                 display.innerHTML = displayedNum + ".";
             } 
-            if (previousKeyType === "operator") { 
+            if (previousKeyType === "operator" || previousKeyType === "calculate") { 
                 display.innerHTML = "0.";
             }
             container.dataset.previousKeyType = "decimal";
         } else if (identity.contains("ce")) {
             removePress(Array.from(keypad.children));
             display.innerHTML = "0";
+            container.dataset.firstValue = "";
+            container.dataset.operator = "";
+            container.dataset.modValue = "";
             container.dataset.previousKeyType = "clear";
         } else if (identity.contains("del")) {
             removePress(Array.from(keypad.children));
@@ -93,19 +96,32 @@ keypad.addEventListener("click", e => {
             const firstValue = container.dataset.firstValue;
             const operator = container.dataset.operator;
             const secondValue = displayedNum;
-            if (firstValue && operator) {
-                display.innerHTML = operate(operator, firstValue, secondValue);
+            if (firstValue && operator && previousKeyType !== "operator" && previousKeyType !== "equal") {
+                const calcValue = operate(operator, firstValue, secondValue);
+                display.innerHTML = calcValue;
+                container.dataset.firstValue = calcValue;
+            } else {
+                container.dataset.firstValue = displayedNum;
             }
-            container.dataset.firstValue = displayedNum;
             container.dataset.operator = keyContent;
             container.dataset.previousKeyType = "operator";
         } else if (identity.contains("equal")) {
             removePress(Array.from(keypad.children));
-            const firstValue = container.dataset.firstValue;
+            let firstValue = container.dataset.firstValue;
             const operator = container.dataset.operator;
-            const secondValue = displayedNum;
-            display.innerHTML = operate(operator, firstValue, secondValue);
+            let secondValue = displayedNum;
+            if (firstValue) {
+                if (previousKeyType === "equal") {
+                    firstValue = displayedNum;
+                    secondValue = container.dataset.modValue;
+                }
+                display.innerHTML = operate(operator, firstValue, secondValue);
+                container.dataset.modValue = secondValue;
+            }
             container.dataset.previousKeyType = "equal";
+            console.log(firstValue)
+            console.log(operator)
+            console.log(secondValue)
         }
     }
 });
@@ -117,11 +133,17 @@ removePress = (ele) => {
 operate = (operator, a, b) => {
     if (operator == "+") {
         return parseFloat(a) + parseFloat(b);
-    } else if (operator == "-") {
+    }
+    if (operator == "-") {
         return parseFloat(a) - parseFloat(b);
-    } else if (operator == "*") {
+    } 
+    if (operator == "*") {
         return parseFloat(a) * parseFloat(b);
-    } else if (operator == "/") {
+    } 
+    if (operator == "/") {
+        if (b === "0") {
+            return ("ERROR");
+        }
         return parseFloat(a) / parseFloat(b);
     } 
 };
