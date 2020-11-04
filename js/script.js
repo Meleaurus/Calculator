@@ -82,7 +82,7 @@ keypad.addEventListener("click", e => {
             container.dataset.previousKeyType = "clear";
         } else if (identity.contains("del")) {
             removePress(Array.from(keypad.children));
-            const arr = Array.from(display.innerHTML);
+            const arr = Array.from(displayedNum);
             arr.pop();
             if (arr.length === 0) {
                 display.innerHTML = "0";
@@ -90,6 +90,19 @@ keypad.addEventListener("click", e => {
                 display.innerHTML = String(arr.join(""));
             }
             container.dataset.previousKeyType = "delete"
+        } else if (identity.contains("plusMinus")) {
+            removePress(Array.from(keypad.children));
+            const arr = Array.from(displayedNum);
+            if (arr.length === 0) {
+                display.innerHTML = "0";
+            } else if (arr[0] !== "-") {
+                arr.unshift("-");
+                display.innerHTML = String(arr.join(""));
+            } else {
+                arr.shift();
+                display.innerHTML = String(arr.join(""));
+            }
+            console.log(arr);
         } else if (identity.contains("operator")) {
             removePress(Array.from(keypad.children));
             key.classList.add("isPressed");
@@ -103,6 +116,9 @@ keypad.addEventListener("click", e => {
             } else {
                 container.dataset.firstValue = displayedNum;
             }
+            console.log(firstValue)
+            console.log(operator)
+            console.log(secondValue)
             container.dataset.operator = keyContent;
             container.dataset.previousKeyType = "operator";
         } else if (identity.contains("equal")) {
@@ -131,19 +147,10 @@ removePress = (ele) => {
 } 
 
 operate = (operator, a, b) => {
-    if (operator == "+") {
-        return parseFloat(a) + parseFloat(b);
-    }
-    if (operator == "-") {
-        return parseFloat(a) - parseFloat(b);
-    } 
-    if (operator == "*") {
-        return parseFloat(a) * parseFloat(b);
-    } 
-    if (operator == "/") {
-        if (b === "0") {
-            return ("ERROR");
-        }
-        return parseFloat(a) / parseFloat(b);
-    } 
+    a = parseFloat(a);
+    b = parseFloat(b);
+    if (operator === "+") return a + b;
+    if (operator === "-") return a - b;
+    if (operator === "*") return a * b;
+    if (operator === "/") return (b === 0) ? ("ERROR"):`${a / b}`;
 };
