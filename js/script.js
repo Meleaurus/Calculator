@@ -69,7 +69,7 @@ keypad.addEventListener("click", e => {
             if (!displayedNum.includes(".")) {
                 display.innerHTML = displayedNum + ".";
             } 
-            if (previousKeyType === "operator" || previousKeyType === "calculate") { 
+            if (previousKeyType === "operator" || previousKeyType === "equal") { 
                 display.innerHTML = "0.";
             }
             container.dataset.previousKeyType = "decimal";
@@ -83,13 +83,15 @@ keypad.addEventListener("click", e => {
         } else if (identity.contains("del")) {
             removePress(Array.from(keypad.children));
             const arr = Array.from(displayedNum);
-            arr.pop();
-            if (arr.length === 0) {
-                display.innerHTML = "0";
-            } else {
-                display.innerHTML = String(arr.join(""));
+            if (previousKeyType !== "equal") {
+                arr.pop();
+                if (arr.length === 0) {
+                    display.innerHTML = "0";
+                } else {
+                    display.innerHTML = String(arr.join(""));
+                }
+                container.dataset.previousKeyType = "delete"
             }
-            container.dataset.previousKeyType = "delete"
         } else if (identity.contains("plusMinus")) {
             removePress(Array.from(keypad.children));
             const arr = Array.from(displayedNum);
