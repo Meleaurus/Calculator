@@ -6,9 +6,24 @@ html {
     background-size: cover;
 }
 
+.del, .ce, .plusMinus {
+    background-color: rgb(51, 153, 255);
+}
+
+.operator, .equal {
+    background-color: orange;
+}
+
+.num, .dec {
+    background-color: white;
+    color: black;
+}
+
 #container {
-    height: 60vmin;
-    width: 40vmin;
+    margin-top: 50px;
+    position: fixed;
+    height: 475px;
+    width: 325px;
     display: inline-grid;
     grid-template-rows: 20% 80%;
     grid-template-columns: 100%;
@@ -21,20 +36,36 @@ html {
     display: block;
     text-align: right;
     grid-area: display;
-    background-color: gainsboro;
-    max-width: 100%;
-    font-size: 25px;
-    border: 5px solid black;
+    background-color: white;
+    font-size: 1.75em;
+    border: 0.35em solid black;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 #keypad {
-    display: inline-grid;
+    background-color: black;
+    position: relative;
+    display: grid;
     grid-area: keypad;
     grid-template-rows: repeat(5, 1fr);
     grid-template-columns: repeat(4, 1fr);
-    border: 5px solid black
+    border: 0.4em solid black
+}
+
+button {
+    margin: 0.5em;
+    border: 0.1em solid black;
+    border-radius: 1em;
+    cursor: pointer;
+}
+
+button:active {
+    transform: scale(0.9);
+}
+
+button:focus {
+    outline: none;
 }
 
 #equal {

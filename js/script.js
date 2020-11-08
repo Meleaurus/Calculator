@@ -95,7 +95,7 @@ keypad.addEventListener("click", e => {
         } else if (identity.contains("plusMinus")) {
             removePress(Array.from(keypad.children));
             const arr = Array.from(displayedNum);
-            if (arr.length === 0) {
+            if (arr.length === 0 || displayedNum === "0") {
                 display.innerHTML = "0";
             } else if (arr[0] !== "-") {
                 arr.unshift("-");
@@ -118,9 +118,6 @@ keypad.addEventListener("click", e => {
             } else {
                 container.dataset.firstValue = displayedNum;
             }
-            console.log(firstValue)
-            console.log(operator)
-            console.log(secondValue)
             container.dataset.operator = keyContent;
             container.dataset.previousKeyType = "operator";
         } else if (identity.contains("equal")) {
@@ -137,9 +134,6 @@ keypad.addEventListener("click", e => {
                 container.dataset.modValue = secondValue;
             }
             container.dataset.previousKeyType = "equal";
-            console.log(firstValue)
-            console.log(operator)
-            console.log(secondValue)
         }
     }
 });
