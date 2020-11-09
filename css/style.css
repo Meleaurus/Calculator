@@ -26,6 +26,7 @@ html {
     margin-top: 2.5em;
     display: inline-grid;
     grid-template-rows: 25% 75%;
+    grid-template-columns: 100%;
     grid-template-areas: 
     "display"
     "keypad";
@@ -47,16 +48,16 @@ html {
     position: relative;
     display: inline-grid;
     grid-area: keypad;
-    grid-template-rows: repeat(5, 1fr);
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 20%);
+    grid-template-columns: repeat(4, 25%);
 }
 
 button {
-    margin: 9px;
+    margin: 0.75em;
     border: 0.1em solid black;
     border-radius: 0.75em;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 0.75em;
 }
 
 button:active {
